@@ -4,19 +4,33 @@ on:
     branches: [ main ]
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '17'
+      
       - uses: gradle/gradle-build-action@v3
         with:
           arguments: assembleDebug
-      - uses: actions/upload-artifact@v4
+      
+      - name: Salvar APK
+        run: |
+          mkdir -p release
+          cp app/build/outputs/apk/debug/*.apk release/SSStart-Ativador.apk
+      
+      - name: Commit APK
+        uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          name: SSStart-Ativador-APK
-          path: app/build/outputs/apk/debug/*.apk
+          commit_message: "ci: APK Ativador [skip ci]"
+          file_pattern: release/*.apk
