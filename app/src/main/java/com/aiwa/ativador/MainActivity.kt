@@ -1,5 +1,4 @@
 package com.aiwa.ativador
-
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 
